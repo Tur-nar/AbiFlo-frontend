@@ -10,6 +10,7 @@ export const AuthRoutes = {
 export const DASHBOARD_ROUTES = {
   HOME: "/dashboard",
   HABITS: "/dashboard/habits",
+  HABITS_ARCHIVED: "/dashboard/habits/archived",
   HABIT_DETAIL: (id: string) => `/dashboard/habits/${id}` as const,
   GOALS: "/dashboard/goals",
   SETTINGS: "/dashboard/settings",

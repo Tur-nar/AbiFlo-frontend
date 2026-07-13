@@ -9,7 +9,7 @@ export const categoryKeys = {
 
 export const habitKeys = {
   all: ["habits"] as const,
-  lists: (filters?: Record<string, unknown>) =>
+  lists: (filters?: Record<string, unknown> | undefined) =>
     [...habitKeys.all, "list", filters] as const,
   today: () => [...habitKeys.all, "today"] as const,
   detail: (id: string) => [...habitKeys.all, "detail", id] as const,

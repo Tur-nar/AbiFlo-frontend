@@ -34,7 +34,7 @@ export function AbiFloLoader() {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{
-              delay: 0.35,
+              delay: 0.40,
               type: "spring",
               stiffness: 300,
               damping: 15,

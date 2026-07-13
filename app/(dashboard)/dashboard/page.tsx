@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetUserProfile } from "@/hooks/users/useGetUserProfile";
+import { useGetUserProfile } from "@/hooks/use-user";
 
 
 export default function DashboardPage() {

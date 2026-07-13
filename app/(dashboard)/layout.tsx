@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { AuthRoutes } from "@/constants/routes";
-import { useGetUserProfile } from "@/hooks/users/useGetUserProfile";
+import { useGetUserProfile } from "@/hooks/use-user";
 import { AbiFloLoader } from "@/components/common/AbiFloLoader";
 import { AppSidebar, NAV_ITEMS } from "@/components/AppSidebar";
 import {
@@ -153,7 +153,7 @@ export default function DashboardLayout({
               </BreadcrumbList>
             </Breadcrumb>
           </header>
-          <div className="flex-1 p-6">{children}</div>
+          <div className="flex-1 p-6 w-full">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
