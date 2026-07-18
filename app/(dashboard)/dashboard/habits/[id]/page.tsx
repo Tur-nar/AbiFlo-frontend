@@ -95,6 +95,15 @@ export default function HabitDetailPage({
       .slice(0, 10);
   }, [habit]);
 
+  // Detect today's log entry
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayLog = useMemo(() => {
+    if (!habit?.logs) return null;
+    return habit.logs.find(
+      (l) => new Date(l.loggedDate).toISOString().slice(0, 10) === todayKey,
+    ) ?? null;
+  }, [habit, todayKey]);
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-6 p-6 max-w-5xl">
@@ -141,6 +150,27 @@ export default function HabitDetailPage({
             {habit.habitType === "BUILD" ? "Core" : "Quit"}{" "}
             {habit.frequency}
           </p>
+          {/* Today's entry indicator */}
+          <div className="mt-2">
+            {todayLog ? (
+              <Badge
+                variant="outline"
+                className="text-[10px] font-semibold border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+              >
+                {todayLog.completed ? "✓ Logged today" : "Skipped today"}
+                {todayLog.value != null && todayLog.value > 0 && (
+                  <span className="ml-1 text-muted-foreground">· Rating {todayLog.value}/100</span>
+                )}
+              </Badge>
+            ) : (
+              <Badge
+                variant="outline"
+                className="text-[10px] font-semibold border-border/50 bg-muted/30 text-muted-foreground"
+              >
+                No entry today
+              </Badge>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-1">
@@ -202,7 +232,7 @@ export default function HabitDetailPage({
         <CardContent className="overflow-x-auto">
           <ActivityHeatmap
             logs={habit.logs ?? []}
-            colorHex={habit.category.colorHex || "#e63956"}
+            colorHex={habit.category.colorHex}
             targetValue={habit.targetValue ?? undefined}
             days={365}
           />
@@ -272,6 +302,7 @@ export default function HabitDetailPage({
                 <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border/50">
                   <th className="pb-2 text-left font-semibold">Date</th>
                   <th className="pb-2 text-left font-semibold">Status</th>
+                  <th className="pb-2 text-left font-semibold">Rating</th>
                   <th className="pb-2 text-left font-semibold">Mood</th>
                   <th className="pb-2 text-left font-semibold">Energy</th>
                   <th className="pb-2 text-left font-semibold">Note</th>
@@ -291,6 +322,15 @@ export default function HabitDetailPage({
                       )}
                     </td>
                     <td className="py-3">
+                      {log.value != null && log.value > 0 ? (
+                        <span className="tabular-nums text-xs font-medium text-foreground">
+                          {log.value}<span className="text-muted-foreground">/100</span>
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+                    <td className="py-3">
                       {log.mood ? MOOD_EMOJI[log.mood] : "—"}
                     </td>
                     <td className="py-3 text-xs">
@@ -305,7 +345,7 @@ export default function HabitDetailPage({
                 ))}
                 {recentLogs.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                    <td colSpan={6} className="py-8 text-center text-muted-foreground">
                       No logs yet
                     </td>
                   </tr>

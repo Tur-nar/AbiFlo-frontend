@@ -1,12 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const plans = [
   {
@@ -49,36 +45,7 @@ const plans = [
 ];
 
 export function Pricing() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from("[data-pricing-reveal]", {
-        scrollTrigger: {
-          trigger: section,
-          start: "top 80%",
-          once: true,
-        },
-        y: 24,
-        autoAlpha: 0,
-        duration: 0.45,
-        ease: "power2.out",
-        stagger: 0.06,
-        clearProps: "opacity,visibility,transform",
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
+  const sectionRef = useScrollReveal<HTMLElement>();
 
   return (
     <section ref={sectionRef} id="pricing" className="py-24 relative overflow-hidden bg-background">
@@ -87,13 +54,13 @@ export function Pricing() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="mx-auto max-w-3xl text-center mb-16">
-          <h2 data-pricing-reveal className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+          <h2 className="scroll-reveal text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
             Scalable{" "}
             <span className="font-serif italic text-brand font-medium">
               Pricing
             </span>
           </h2>
-          <p data-pricing-reveal className="mt-4 text-sm sm:text-base text-muted-foreground">
+          <p className="scroll-reveal mt-4 text-sm sm:text-base text-muted-foreground">
             Choose the plan that fits your engineering workflow.
           </p>
         </div>
@@ -103,8 +70,7 @@ export function Pricing() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              data-pricing-reveal
-              className={`relative flex flex-col justify-between rounded-lg border bg-card/60 p-8 shadow-sm transition-[border-color,transform,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:bg-card/80 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${plan.popular
+              className={`scroll-reveal relative flex flex-col justify-between rounded-lg border bg-card/60 p-8 shadow-sm transition-[border-color,transform,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:bg-card/80 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${plan.popular
                 ? "border-brand ring-1 ring-brand/40 md:-translate-y-1 shadow-lg shadow-brand/5"
                 : "border-border"
                 }`}

@@ -45,19 +45,11 @@ export function HabitCard({
   const [logDialogOpen, setLogDialogOpen] = useState(false);
   const miniGrid = buildMiniGrid(habit);
 
-  // Determine if completed today from logs or explicit prop
-  const isCompletedToday =
-    todayCompleted ??
-    (habit.logs ?? []).some((l) => {
-      const d = new Date(l.loggedDate);
-      const now = new Date();
-      return (
-        l.completed &&
-        d.getFullYear() === now.getFullYear() &&
-        d.getMonth() === now.getMonth() &&
-        d.getDate() === now.getDate()
-      );
-    });
+  // Today's log — the backend already filters logs to today's date only,
+  // so logs[0] is today's entry if it exists.
+  const todayLog = (habit.logs ?? [])[0] ?? null;
+
+  const isCompletedToday = todayCompleted ?? (todayLog?.completed === true);
 
   return (
     <>
@@ -76,15 +68,14 @@ export function HabitCard({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (isCompletedToday) {
-                  // Quick uncomplete
-                  onLogToday?.(habit.id, {
-                    date: new Date().toISOString().slice(0, 10),
-                    completed: false,
-                    value: 0,
-                  });
+                if (todayLog) {
+                  // Already logged — toggle uncomplete
+                  // onLogToday?.(habit.id, {
+                  //   date: new Date().toISOString().slice(0, 10),
+                  //   completed: !todayLog.completed,
+                  //   value: todayLog.value,
+                  // });
                 } else {
-                  // Open full log dialog
                   setLogDialogOpen(true);
                 }
               }}
@@ -100,25 +91,41 @@ export function HabitCard({
             </button>
           )}
 
-          {/* Title + category */}
+          {/* Title + category + today's entry indicator */}
           <div className="flex-1 min-w-0">
-            <h3
-              className={cn(
-                "font-semibold text-sm truncate",
-                isCompletedToday && "line-through text-muted-foreground",
+            <div className="flex items-center gap-2">
+              <h3
+                className={cn(
+                  "font-semibold text-sm truncate",
+                  isCompletedToday && "line-through text-muted-foreground",
+                )}
+              >
+                {habit.title}
+              </h3>
+              {todayLog && todayLog.completed && todayLog.value != null && todayLog.value > 0 && (
+                <span className="shrink-0 rounded-md bg-brand/10 border border-brand/20 px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-brand">
+                  {todayLog.value}/100
+                </span>
               )}
-            >
-              {habit.title}
-            </h3>
+            </div>
             <p className="mt-0.5 text-[11px] text-muted-foreground uppercase tracking-wider">
               {habit.category.name} ·{" "}
               {habit.frequency.charAt(0) + habit.frequency.slice(1).toLowerCase()}
+              {todayLog && (
+                <span className="normal-case ml-1">
+                  · {todayLog.completed ? "Logged today ✓" : "Skipped today"}
+                </span>
+              )}
             </p>
           </div>
 
-          {/* Streak */}
-          <div className="flex flex-col items-center shrink-0">
-            <StreakBadge count={habit.currentStreak} habitType={habit.habitType} />
+          {/* Streak + Achievement Badges */}
+          <div className="flex flex-col items-end shrink-0">
+            <StreakBadge
+              count={habit.currentStreak}
+              totalCompletions={habit.totalCompletions}
+              habitType={habit.habitType}
+            />
             <span className="text-[9px] text-muted-foreground uppercase tracking-wider mt-0.5">
               streak
             </span>

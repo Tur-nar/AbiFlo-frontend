@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const faqs = [
   {
@@ -46,38 +42,7 @@ const faqs = [
 ];
 
 export function FAQ() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-    const ctx = gsap.context(() => {
-      gsap.from("[data-faq-heading]", {
-        scrollTrigger: {
-          trigger: "[data-faq-heading]",
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-
-      gsap.from("[data-faq-container]", {
-        scrollTrigger: {
-          trigger: "[data-faq-container]",
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-        y: 40,
-        opacity: 0,
-        scale: 0.97,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
+  const sectionRef = useScrollReveal<HTMLElement>();
 
   return (
     <section ref={sectionRef} className="py-24 relative overflow-hidden bg-background">
@@ -86,19 +51,18 @@ export function FAQ() {
       <div className="mx-auto max-w-4xl px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 data-faq-heading className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+          <h2 className="scroll-reveal text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
             System Intelligence:{" "}
             <span className="font-serif italic text-brand font-medium">FAQ</span>
           </h2>
-          <p data-faq-heading className="mt-4 text-xs sm:text-sm text-muted-foreground">
+          <p className="scroll-reveal mt-4 text-xs sm:text-sm text-muted-foreground">
             Deep dives into the mechanics of the AbiFlo engine.
           </p>
         </div>
 
         {/* Accordion List */}
         <div
-          data-faq-container
-          className="rounded-2xl border border-border bg-card/30 backdrop-blur-xs p-6 sm:p-8"
+          className="scroll-reveal rounded-2xl border border-border bg-card/30 backdrop-blur-xs p-6 sm:p-8"
         >
           <Accordion className="w-full">
             {faqs.map((faq, index) => (

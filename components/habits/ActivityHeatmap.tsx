@@ -34,7 +34,6 @@ export function ActivityHeatmap({
   days = 365,
   className,
 }: ActivityHeatmapProps) {
-  // Resolve brand color: use CSS variable if no colorHex provided
   const resolvedColor = colorHex || "var(--brand)";
   const { grid, months } = useMemo(() => {
     const today = startOfDay(new Date());
@@ -144,14 +143,14 @@ export function ActivityHeatmap({
                         <div
                           className={cn(
                             "h-[12px] w-[12px] rounded-[2px] transition-colors cursor-pointer",
-                            cell.intensity === 0 && "bg-muted/50",
+                            cell.intensity === 0 && "bg-muted",
                           )}
                           style={
                             cell.intensity > 0
                               ? {
-                                  backgroundColor: resolvedColor,
-                                  opacity: [0, 0.25, 0.5, 0.75, 1][cell.intensity],
-                                }
+                                backgroundColor: resolvedColor,
+                                opacity: [0, 0.25, 0.5, 0.75, 1][cell.intensity],
+                              }
                               : undefined
                           }
                         />
@@ -191,9 +190,9 @@ export function ActivityHeatmap({
               level === 0
                 ? { backgroundColor: "var(--muted)", opacity: 0.5 }
                 : {
-                    backgroundColor: resolvedColor,
-                    opacity: [0, 0.25, 0.5, 0.75, 1][level],
-                  }
+                  backgroundColor: resolvedColor,
+                  opacity: [0, 0.25, 0.5, 0.75, 1][level],
+                }
             }
           />
         ))}

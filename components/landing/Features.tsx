@@ -1,8 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   TrendingUp,
   Brain,
@@ -11,8 +8,7 @@ import {
   Users,
   Target,
 } from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const features = [
   {
@@ -58,8 +54,7 @@ function FeatureCard({ feature }: { feature: typeof features[0] }) {
 
   return (
     <div
-      data-feature-reveal
-      className="group flex flex-col gap-4 rounded-lg border border-border bg-card/60 p-6 shadow-sm transition-[border-color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:bg-card/80 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="scroll-reveal group flex flex-col gap-4 rounded-lg border border-border bg-card/60 p-6 shadow-sm transition-[border-color,transform,background-color] duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:bg-card/80 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 border border-brand/20 transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none">
         <Icon className="h-5 w-5 text-brand" />
@@ -77,36 +72,7 @@ function FeatureCard({ feature }: { feature: typeof features[0] }) {
 }
 
 export function Features() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from("[data-feature-reveal]", {
-        scrollTrigger: {
-          trigger: section,
-          start: "top 80%",
-          once: true,
-        },
-        y: 24,
-        autoAlpha: 0,
-        duration: 0.45,
-        ease: "power2.out",
-        stagger: 0.06,
-        clearProps: "opacity,visibility,transform",
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
+  const sectionRef = useScrollReveal<HTMLElement>();
 
   return (
     <section ref={sectionRef} id="features" className="py-24 relative overflow-hidden bg-background">
@@ -115,8 +81,7 @@ export function Features() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
         <div className="mx-auto max-w-3xl text-center mb-16">
           <h2
-            data-feature-reveal
-            className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground"
+            className="scroll-reveal text-3xl sm:text-4xl font-bold tracking-tight text-foreground"
           >
             Engineered for{" "}
             <span className="font-serif italic text-brand font-medium">
@@ -124,8 +89,7 @@ export function Features() {
             </span>
           </h2>
           <p
-            data-feature-reveal
-            className="mt-4 text-sm sm:text-base text-muted-foreground max-w-md mx-auto"
+            className="scroll-reveal mt-4 text-sm sm:text-base text-muted-foreground max-w-md mx-auto"
           >
             Advanced tools designed for technical minds to master their daily routines.
           </p>
