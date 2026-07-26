@@ -1,11 +1,8 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const faqs = [
@@ -41,45 +38,95 @@ const faqs = [
   },
 ];
 
+function FAQItem({
+  faq,
+  isOpen,
+  onToggle,
+}: {
+  faq: (typeof faqs)[0];
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="border-b border-border/40 last:border-b-0">
+      <button
+        onClick={onToggle}
+        className="group flex w-full items-center justify-between py-5 text-left transition-colors"
+      >
+        <span className="text-sm sm:text-base font-medium text-foreground group-hover:text-brand transition-colors pr-4">
+          {faq.question}
+        </span>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="shrink-0"
+        >
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+            className="overflow-hidden"
+          >
+            <p className="pb-5 text-sm text-muted-foreground leading-relaxed">
+              {faq.answer}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export function FAQ() {
   const sectionRef = useScrollReveal<HTMLElement>();
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section ref={sectionRef} className="py-24 relative overflow-hidden bg-background">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,oklch(0.15_0.02_18/0.1),transparent_50%)]" />
+    <section
+      ref={sectionRef}
+      className="py-28 relative overflow-hidden bg-background"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,oklch(0.15_0.02_18/0.08),transparent_50%)]" />
 
-      <div className="mx-auto max-w-4xl px-6 relative z-10">
+      <div className="mx-auto max-w-3xl px-6 relative z-10">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="scroll-reveal text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+        <div className="scroll-reveal text-center mb-16">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/60 font-medium mb-3">
+            FAQ
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
             System Intelligence:{" "}
-            <span className="font-serif italic text-brand font-medium">FAQ</span>
+            <span className="font-serif italic text-brand font-medium">
+              FAQ
+            </span>
           </h2>
-          <p className="scroll-reveal mt-4 text-xs sm:text-sm text-muted-foreground">
+          <p className="mt-4 text-xs sm:text-sm text-muted-foreground">
             Deep dives into the mechanics of the AbiFlo engine.
           </p>
         </div>
 
-        {/* Accordion List */}
+        {/* Accordion */}
         <div
-          className="scroll-reveal rounded-2xl border border-border bg-card/30 backdrop-blur-xs p-6 sm:p-8"
+          data-faq-container
+          className="scroll-reveal rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm px-6 sm:px-8"
         >
-          <Accordion className="w-full">
-            {faqs.map((faq, index) => (
-              <AccordionItem
-                key={index}
-                value={`faq-${index}`}
-                className="border-b border-border/60 py-2.5 last:border-b-0"
-              >
-                <AccordionTrigger className="text-xs sm:text-sm font-medium hover:no-underline text-foreground transition-colors hover:text-brand">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground leading-relaxed pt-2">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          {faqs.map((faq, index) => (
+            <FAQItem
+              key={index}
+              faq={faq}
+              isOpen={openIndex === index}
+              onToggle={() =>
+                setOpenIndex(openIndex === index ? null : index)
+              }
+            />
+          ))}
         </div>
       </div>
     </section>

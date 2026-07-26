@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useMemo } from "react";
 import { Plus, Search, TrendingUp, Archive } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

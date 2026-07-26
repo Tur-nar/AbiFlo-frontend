@@ -1,13 +1,10 @@
 "use client";
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetUserProfile } from "@/hooks/use-user";
 
-
 export default function DashboardPage() {
   const { data: profile, isLoading, error } = useGetUserProfile();
-
 
   if (isLoading) {
     return (
