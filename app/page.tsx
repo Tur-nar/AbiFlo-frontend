@@ -11,7 +11,7 @@ import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvide
 export default function Home() {
   return (
     <SmoothScrollProvider>
-      <div className="relative min-h-screen flex flex-col overflow-hidden bg-background text-foreground selection:bg-brand/35 selection:text-foreground">
+      <div className="relative min-h-screen flex flex-col bg-background text-foreground selection:bg-brand/35 selection:text-foreground">
         <Navbar />
         <main className="flex-1 flex flex-col">
           <Hero />

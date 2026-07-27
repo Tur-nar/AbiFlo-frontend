@@ -20,7 +20,7 @@ const steps = [
       "Define daily, weekly, or custom-frequency habits with reminders. Stack habits together for powerful routines.",
     icon: PlusCircle,
     accentColor: "text-brand",
-    borderColor: "border-brand/20",
+    borderColor: "border-brand/50",
     bgColor: "bg-brand/10",
     visual: (
       <div className="space-y-3">
@@ -48,7 +48,7 @@ const steps = [
       "Set measurable goals with deadlines. Break them into milestones and link habits directly to outcomes.",
     icon: Target,
     accentColor: "text-violet-500",
-    borderColor: "border-violet-500/20",
+    borderColor: "border-violet-500/50",
     bgColor: "bg-violet-500/10",
     visual: (
       <div className="space-y-3">
@@ -81,12 +81,12 @@ const steps = [
       "Log completions with one tap. Watch your heatmap fill up and streaks grow. Mood and energy tracking included.",
     icon: CalendarCheck,
     accentColor: "text-emerald-500",
-    borderColor: "border-emerald-500/20",
+    borderColor: "border-emerald-500/50",
     bgColor: "bg-emerald-500/10",
     visual: (
       <div className="space-y-4">
         <div className="grid grid-cols-7 gap-1.5">
-          {[0.7,0.3,1,0.5,0.8,0.2,0.9, 0.4,1,0.6,0.3,0.8,0.5,1, 0.2,0.7,0.4,1,0.6,0.3,0.8, 0.9,0.5,0.2,0.7,1,0.4,0.6].map((intensity, i) => (
+          {[0.7, 0.3, 1, 0.5, 0.8, 0.2, 0.9, 0.4, 1, 0.6, 0.3, 0.8, 0.5, 1, 0.2, 0.7, 0.4, 1, 0.6, 0.3, 0.8, 0.9, 0.5, 0.2, 0.7, 1, 0.4, 0.6].map((intensity, i) => (
             <div
               key={i}
               className="aspect-square rounded-sm"
@@ -110,7 +110,7 @@ const steps = [
       "Get personalized suggestions on timing, habit stacking, and burnout prevention from our AI coaching engine.",
     icon: Brain,
     accentColor: "text-fuchsia-500",
-    borderColor: "border-fuchsia-500/20",
+    borderColor: "border-fuchsia-500/50",
     bgColor: "bg-fuchsia-500/10",
     visual: (
       <div className="space-y-3">
@@ -137,7 +137,7 @@ const steps = [
       "Visualize trends with heatmaps, radar charts, and weekly reports. Export data or connect via API.",
     icon: BarChart3,
     accentColor: "text-sky-500",
-    borderColor: "border-sky-500/20",
+    borderColor: "border-sky-500/50",
     bgColor: "bg-sky-500/10",
     visual: (
       <div className="space-y-3">
@@ -168,7 +168,7 @@ const steps = [
       "Earn XP for every completion. Unlock badges, hit milestones, and get recognized for consistency.",
     icon: Trophy,
     accentColor: "text-amber-500",
-    borderColor: "border-amber-500/20",
+    borderColor: "border-amber-500/50",
     bgColor: "bg-amber-500/10",
     visual: (
       <div className="space-y-3">
@@ -209,7 +209,7 @@ const steps = [
       "Create or join group challenges. Compete on leaderboards, share progress, and build accountability.",
     icon: Users,
     accentColor: "text-rose-500",
-    borderColor: "border-rose-500/20",
+    borderColor: "border-rose-500/50",
     bgColor: "bg-rose-500/10",
     visual: (
       <div className="space-y-3">
@@ -237,19 +237,21 @@ const steps = [
 export function HowItWorks() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [trackWidth, setTrackWidth] = useState(0);
+  const [wrapperHeight, setWrapperHeight] = useState("100vh");
 
-  // Measure the track width on mount and resize
+  // Measure track width and set wrapper height (client only)
   useEffect(() => {
     const measure = () => {
-      if (trackRef.current) {
-        setTrackWidth(trackRef.current.scrollWidth);
-      }
+      if (!trackRef.current) return;
+      const totalWidth = trackRef.current.scrollWidth;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const scrollDist = Math.max(0, totalWidth - vw);
+      setWrapperHeight(`${scrollDist + vh}px`);
     };
 
     measure();
-    // Re-measure after fonts/images load
-    const timer = setTimeout(measure, 300);
+    const timer = setTimeout(measure, 400);
     window.addEventListener("resize", measure);
 
     return () => {
@@ -258,95 +260,90 @@ export function HowItWorks() {
     };
   }, []);
 
-  const scrollDistance = Math.max(0, trackWidth - (typeof window !== "undefined" ? window.innerWidth : 1400));
-
-  // Use framer-motion scroll tracking on the tall wrapper
+  // Track vertical scroll progress through the tall wrapper
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
     offset: ["start start", "end end"],
   });
 
-  // Map vertical scroll → horizontal translation
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollDistance]);
+  // Callback-based transform — reads dimensions live, never stale
+  const x = useTransform(scrollYProgress, (latest) => {
+    if (!trackRef.current) return 0;
+    const scrollDist = trackRef.current.scrollWidth - window.innerWidth;
+    return -latest * Math.max(0, scrollDist);
+  });
 
   return (
-    <>
-      {/* 
-        Tall wrapper: height = 100vh (sticky viewport) + scrollDistance (horizontal content overflow).
-        The user scrolls through this tall div vertically, and the sticky container converts
-        that vertical scroll into horizontal motion.
-      */}
-      <div
-        ref={wrapperRef}
-        style={{ height: `${scrollDistance + (typeof window !== "undefined" ? window.innerHeight : 800)}px` }}
-        className="relative"
-      >
-        {/* Sticky container — stays pinned at the top of the viewport */}
-        <div className="sticky top-0 h-screen overflow-hidden bg-background">
-          {/* Section header */}
-          <div className="absolute top-0 left-0 right-0 z-20 pt-16 pb-8 pointer-events-none">
-            <div className="mx-auto max-w-7xl px-6 lg:px-8">
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/60 font-medium mb-3">
-                How It Works
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-                Your journey to{" "}
-                <span className="font-serif italic text-brand font-medium">
-                  transformation
-                </span>
-              </h2>
-            </div>
+    <div
+      ref={wrapperRef}
+      style={{ height: wrapperHeight }}
+      className="relative"
+    >
+      {/* Sticky container — stays pinned at the top of the viewport */}
+      <div className="sticky top-0 h-screen overflow-hidden bg-background">
+        {/* Section header */}
+        <div className="absolute top-0 left-0 right-0 z-20 pt-16 pb-8 pointer-events-none">
+          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/60 font-medium mb-3">
+              How It Works
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
+              Your journey to{" "}
+              <span className="font-serif italic text-brand font-medium">
+                transformation
+              </span>
+            </h2>
           </div>
+        </div>
 
-          {/* Horizontal scrolling track — driven by framer-motion x transform */}
-          <motion.div
-            ref={trackRef}
-            className="absolute top-0 left-0 flex h-full items-center gap-8 pl-6 lg:pl-8 pt-28 pb-16 pr-[10vw] will-change-transform"
-            style={{ x }}
-          >
-            {steps.map((step) => {
-              const Icon = step.icon;
-              return (
+        {/* Horizontal scrolling track — driven by framer-motion x transform */}
+        <motion.div
+          ref={trackRef}
+          className="absolute top-0 left-0 flex h-full items-center gap-8 pl-6 lg:pl-8 pt-28 pb-16 pr-[10vw] will-change-transform"
+          style={{ x }}
+        >
+          {steps.map((step) => {
+            const Icon = step.icon;
+            return (
+              <div
+                key={step.number}
+                className="w-105 min-w-95 shrink-0"
+              >
                 <div
-                  key={step.number}
-                  className="w-105 min-w-95 shrink-0"
+                  className={`group relative rounded-2xl border ${step.borderColor} ${step.bgColor} backdrop-blur-sm p-8 h-full transition-all duration-300 hover:bg-card/60`}
                 >
-                  <div
-                    className={`group relative rounded-2xl border ${step.borderColor} bg-card/40 backdrop-blur-sm p-8 h-full transition-all duration-300 hover:bg-card/60`}
-                  >
-                    <div className="relative z-10">
-                      {/* Step number + icon */}
-                      <div className="flex items-center gap-4 mb-6">
-                        <span className="text-5xl font-bold text-foreground/8 tracking-tighter">
-                          {step.number}
-                        </span>
-                        <div
-                          className={`flex h-11 w-11 items-center justify-center rounded-xl ${step.bgColor} border ${step.borderColor}`}
-                        >
-                          <Icon className={`h-5 w-5 ${step.accentColor}`} />
-                        </div>
+                  <div className="relative z-10">
+                    {/* Step number + icon */}
+                    <div className="flex items-center gap-4 mb-6">
+                      <span className="text-5xl font-bold text-foreground/8 tracking-tighter">
+                        {step.number}
+                      </span>
+                      <div
+                        className={`flex h-11 w-11 items-center justify-center rounded-xl ${step.bgColor} border ${step.borderColor}`}
+                      >
+                        <Icon className={`h-5 w-5 ${step.accentColor}`} />
                       </div>
+                    </div>
 
-                      {/* Content */}
-                      <h3 className="text-xl font-semibold text-foreground mb-2">
-                        {step.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                        {step.description}
-                      </p>
+                    {/* Content */}
+                    <h3 className="text-xl font-semibold text-foreground mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                      {step.description}
+                    </p>
 
-                      {/* Visual preview */}
-                      <div className="rounded-xl border border-border/30 bg-background/40 p-4">
-                        {step.visual}
-                      </div>
+                    {/* Visual preview */}
+                    <div className="rounded-xl border border-border/30 bg-background/40 p-4">
+                      {step.visual}
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </motion.div>
-        </div>
+              </div>
+            );
+          })}
+        </motion.div>
       </div>
-    </>
+    </div>
   );
 }
