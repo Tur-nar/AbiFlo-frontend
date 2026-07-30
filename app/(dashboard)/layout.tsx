@@ -54,10 +54,8 @@ export default function DashboardLayout({
   const { data: session, isPending: sessionPending } = authClient.useSession();
   const [sessionCheckTimedOut, setSessionCheckTimedOut] = useState(false);
   const hasSession = Boolean(session);
-  const { data: profile, isLoading: profileLoading } =
-    useGetUserProfile(hasSession);
-  const shouldRedirectToSignIn =
-    (!sessionPending && !session) || (sessionCheckTimedOut && !session);
+  const { data: profile, isLoading: profileLoading } = useGetUserProfile(hasSession);
+  const shouldRedirectToSignIn = (!sessionPending && !session) || (sessionCheckTimedOut && !session);
   const needsOnboarding = Boolean(
     session && !profileLoading && profile && !profile.onboardingCompletedAt
   );
