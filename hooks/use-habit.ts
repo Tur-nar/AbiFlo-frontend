@@ -22,8 +22,6 @@ import type {
   ReorderHabitsPayload,
 } from "@/types/habit.types";
 
-// ─── Queries ─────────────────────────────────────────────────────────────────
-
 export const useHabits = (filters?: HabitFilters, enabled = true) => {
   return useQuery({
     queryKey: habitKeys.lists(filters as Record<string, unknown> | undefined),
@@ -59,8 +57,6 @@ export const useHabitLogs = (
     enabled: !!id && enabled,
   });
 };
-
-// ─── Mutations ───────────────────────────────────────────────────────────────
 
 export const useCreateHabit = () => {
   const queryClient = useQueryClient();
