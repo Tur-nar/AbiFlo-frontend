@@ -2,11 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-/**
- * Lightweight scroll-reveal using IntersectionObserver.
- * Adds `data-visible` to the section once it enters the viewport,
- * which CSS transitions pick up — zero scroll listeners, zero GSAP overhead.
- */
 export function useScrollReveal<T extends HTMLElement>(
   threshold = 0.15,
 ) {

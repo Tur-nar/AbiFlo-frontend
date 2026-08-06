@@ -11,8 +11,6 @@ import type {
   HabitFilters,
 } from "@/types/habit.types";
 
-// ─── Habits CRUD ─────────────────────────────────────────────────────────────
-
 export const GetHabitsApi = async (filters?: HabitFilters): Promise<Habit[]> => {
   const params = new URLSearchParams();
   if (filters?.categoryId) params.set("categoryId", filters.categoryId);
