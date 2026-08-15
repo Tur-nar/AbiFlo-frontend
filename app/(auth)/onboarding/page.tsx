@@ -31,25 +31,21 @@ export default function OnboardingPage() {
     useCategories();
   const [loading, setLoading] = useState(false);
 
-  // Session data
   const { data: session } = authClient.useSession();
   const userName = session?.user?.name || "there";
 
-  // Step 1: Profile
+
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [timezone, setTimezone] = useState("Africa/Lagos");
 
-  // Step 2: Categories
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  // Step 3: Habit
   const [habitTitle, setHabitTitle] = useState("");
   const [frequency, setFrequency] = useState<"DAILY" | "WEEKLY">("DAILY");
   const [difficulty, setDifficulty] = useState<string>("MEDIUM");
   const [selectedHabitCategory, setSelectedHabitCategory] = useState("");
 
-  // Step 4: Goal
   const [goalTitle, setGoalTitle] = useState("");
   const [goalTargetDate, setGoalTargetDate] = useState("");
   const [goalWhy, setGoalWhy] = useState("");
